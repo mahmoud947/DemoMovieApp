@@ -49,6 +49,8 @@ dependencies {
     kapt(libs.hilt.compiler)
     implementation(libs.hilt.navigation.fragment)
 
+    // Retrofit
+    implementation(libs.retrofit)
     implementation (libs.paging.runtime)
 
 

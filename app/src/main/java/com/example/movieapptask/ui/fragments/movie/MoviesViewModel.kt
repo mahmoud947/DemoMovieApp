@@ -1,21 +1,18 @@
 package com.example.movieapptask.ui.fragments.movie
 
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
 import com.example.core.utils.Resource
-import com.example.core.utils.handle
 import com.example.domain.models.Movie
 import com.example.domain.models.MovieCategory
 import com.example.domain.usecases.GetMoviesByCategoryUseCase
-import com.example.domain.usecases.RefreshMoviesByCategoryUseCase
+import com.example.domain.usecases.RefreshMoviesUseCase
 import com.example.startupproject.ui.base.NavigationCommand
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -23,9 +20,12 @@ import javax.inject.Inject
 @HiltViewModel
 class MoviesViewModel @Inject constructor(
     private val getMoviesByCategoryUseCase: GetMoviesByCategoryUseCase,
-    private val refreshMoviesByCategoryUseCase: RefreshMoviesByCategoryUseCase
+    private val refreshMoviesUseCase: RefreshMoviesUseCase
 ) : BaseViewModel() {
 
+    init {
+        getMovies()
+    }
 
     private val _topRated = MutableStateFlow<Resource<List<Movie>>>(Resource.Loading)
     val topRated: StateFlow<Resource<List<Movie>>> get() = _topRated
@@ -41,14 +41,8 @@ class MoviesViewModel @Inject constructor(
     private val _nowPlaying = MutableStateFlow<Resource<List<Movie>>>(Resource.Loading)
     val nowPlaying: StateFlow<Resource<List<Movie>>> get() = _nowPlaying
 
-    init {
-        launchCoroutine(Dispatchers.IO) {
-            refreshMoviesByCategoryUseCase().collectLatest { resource: Resource<Unit> ->
-
-            }
-        }
-
-    }
+    private val _refreshData = MutableStateFlow<Resource<Unit>>(Resource.Loading)
+    val refreshData: StateFlow<Resource<Unit>> get() = _refreshData
 
     fun getMovies() {
         launchCoroutine(Dispatchers.IO) {
@@ -72,6 +66,13 @@ class MoviesViewModel @Inject constructor(
         }
     }
 
+    fun refresh(){
+        launchCoroutine(Dispatchers.IO) {
+            refreshMoviesUseCase().onEach {
+                _refreshData.emit(it)
+            }.launchIn(viewModelScope)
+        }
+    }
     fun navigateToMovieDetails(movieId: Int) {
         navigationCommand.value = NavigationCommand.To(
             MovieFragmentDirections.actionMovieFragmentToMovieDetailsFragment(movieId)

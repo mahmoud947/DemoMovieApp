@@ -4,7 +4,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
 import com.example.core.utils.Resource
 import com.example.domain.models.Movie
-import com.example.domain.usecases.RefreshMoviesByIdUseCase
+import com.example.domain.usecases.GetMoviesByIdUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MovieDetailsViewModel @Inject constructor(
-    private val getMoviesByIdUseCase: RefreshMoviesByIdUseCase
+    private val getMoviesByIdUseCase: GetMoviesByIdUseCase
 ):BaseViewModel() {
     private val _movie = MutableStateFlow<Resource<Movie>>(Resource.Loading)
     val movie: StateFlow<Resource<Movie>> get() = _movie

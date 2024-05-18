@@ -4,17 +4,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.core.base.BaseFragment
+import com.example.core.extensions.snackBar
 import com.example.core.extensions.toast
 import com.example.core.utils.Resource
 import com.example.core.utils.handle
 import com.example.domain.models.Movie
+import com.example.movieapptask.R
+import com.example.movieapptask.utils.recyclerview.WrapContentLinearLayoutManager
 import com.example.movieapptask.animation.ZoomOutPageTransformer
 import com.example.movieapptask.databinding.FragmentMovieBinding
 import com.example.movieapptask.ui.fragments.movie.adapters.MovieAdapter
@@ -31,6 +34,10 @@ class MovieFragment : BaseFragment() {
     private lateinit var upcomingAdapter: MovieAdapter
     private lateinit var nowPlayingAdapter: MovieAdapter
     private lateinit var popularAdapter: MovieAdapter
+
+    private lateinit var upcomingLayoutManager: LinearLayoutManager
+    private lateinit var nowPlayingLayoutManager: LinearLayoutManager
+    private lateinit var popularLayoutManager: LinearLayoutManager
     override val viewModel: MoviesViewModel
             by viewModels()
 
@@ -46,13 +53,19 @@ class MovieFragment : BaseFragment() {
         binding = FragmentMovieBinding.inflate(inflater, container, false)
         initView()
 
-        viewModel.getMovies()
-
         observers()
         return binding.root
     }
 
     private fun initView() {
+        upcomingLayoutManager =
+            WrapContentLinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        popularLayoutManager =
+            WrapContentLinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+        nowPlayingLayoutManager =
+            WrapContentLinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+
+
         topRatedAdapter = TopRatedAdapter(interaction = object : TopRatedAdapter.Interaction {
             override fun onItemSelected(position: Int, item: Movie) {
                 viewModel.navigateToMovieDetails(item.id)
@@ -76,14 +89,22 @@ class MovieFragment : BaseFragment() {
 
         binding.rvUpcoming.apply {
             adapter = upcomingAdapter
+            layoutManager = upcomingLayoutManager
         }
 
         binding.rvPopular.apply {
             adapter = popularAdapter
+            layoutManager = popularLayoutManager
         }
 
         binding.rvNowPlaying.apply {
             adapter = nowPlayingAdapter
+            layoutManager = nowPlayingLayoutManager
+        }
+        binding.srl.isRefreshing = false
+
+        binding.srl.setOnRefreshListener {
+            viewModel.refresh()
         }
 
     }
@@ -93,6 +114,23 @@ class MovieFragment : BaseFragment() {
         observeUpcoming()
         observePopular()
         observeNowPlaying()
+        observeRefresh()
+    }
+
+    private fun observeRefresh() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.refreshData.collectLatest { resources ->
+                    resources.handle(onLoading = {
+
+                    }, onSuccess = {
+                        binding.srl.isRefreshing = false
+                    }, onError = {
+                        binding.srl.isRefreshing = false
+                    })
+                }
+            }
+        }
     }
 
 
@@ -118,11 +156,13 @@ class MovieFragment : BaseFragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.upcoming.collectLatest { resource: Resource<List<Movie>> ->
                     resource.handle(onLoading = {
-
+                        upcomingAdapter.isLoading = true
                     }, onSuccess = {
                         upcomingAdapter.submitList(it)
+                        upcomingAdapter.isLoading = false
                     }, onError = {
                         toast(it.toString())
+                        upcomingAdapter.isLoading = false
                     })
                 }
             }
@@ -134,9 +174,10 @@ class MovieFragment : BaseFragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.popular.collectLatest { resource: Resource<List<Movie>> ->
                     resource.handle(onLoading = {
-
+                        popularAdapter.isLoading = true
                     }, onSuccess = {
                         popularAdapter.submitList(it)
+                        popularAdapter.isLoading = false
                     }, onError = {
                         toast(it.toString())
                     })
@@ -150,10 +191,14 @@ class MovieFragment : BaseFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.nowPlaying.collectLatest { resource: Resource<List<Movie>> ->
-                    resource.handle(onLoading = {
+                    if(resource.isEmpty()){
 
+                    }
+                    resource.handle(onLoading = {
+                        nowPlayingAdapter.isLoading = true
                     }, onSuccess = {
                         nowPlayingAdapter.submitList(it)
+                        nowPlayingAdapter.isLoading = false
                     }, onError = {
                         toast(it.toString())
                     })
