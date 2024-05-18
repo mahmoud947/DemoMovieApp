@@ -17,7 +17,10 @@ interface MovieDao {
     fun pagingSource():PagingSource<Int,MovieEntity>
 
     @Query("SELECT * FROM movieentity WHERE category=:category")
-    suspend fun getMovieByCategory(category: MovieCategory):List<Movie>
+    suspend fun getMovieByCategory(category: MovieCategory):List<MovieEntity>
+
+    @Query("SELECT * FROM movieentity WHERE id=:movieId")
+    suspend fun getMovieByID(movieId: Int):MovieEntity
 
     @Query("DELETE FROM movieentity")
     suspend fun clearAll()

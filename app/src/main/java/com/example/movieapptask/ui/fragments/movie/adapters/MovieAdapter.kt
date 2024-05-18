@@ -1,4 +1,4 @@
-package com.example.movieapptask
+package com.example.movieapptask.ui.fragments.movie.adapters
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.domain.models.Movie
-import com.example.movieapptask.databinding.TestItemBinding
+import com.example.movieapptask.databinding.ItemMovieBinding
 
 class MovieAdapter(private val interaction: Interaction? = null) :
     ListAdapter<Movie, RecyclerView.ViewHolder>(DIFF_CALLBACK) {
@@ -39,12 +39,13 @@ class MovieAdapter(private val interaction: Interaction? = null) :
 
     class MovieViewHolder
     constructor(
-        private val binding: TestItemBinding,
+        private val binding: ItemMovieBinding,
         private val interaction: Interaction?
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun onBind(item: Movie) {
-            binding.textView.text = item.title
+            binding.movie = item
+            binding.executePendingBindings()
             binding.root.setOnClickListener {
                 interaction?.onItemSelected(bindingAdapterPosition, item)
             }
@@ -53,7 +54,7 @@ class MovieAdapter(private val interaction: Interaction? = null) :
 
         companion object {
             fun from(viewGroup: ViewGroup, interaction: Interaction?): MovieViewHolder {
-                val bind = TestItemBinding.inflate(
+                val bind = ItemMovieBinding.inflate(
                     LayoutInflater.from(viewGroup.context),
                     viewGroup,
                     false

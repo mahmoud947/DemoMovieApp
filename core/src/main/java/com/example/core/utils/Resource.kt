@@ -2,21 +2,14 @@ package com.example.core.utils
 
 sealed class Resource<out T>() {
     data class Success<T>(val data: T) : Resource<T>()
-    data class Error(val exception: Throwable? = null) : Resource<Nothing>()
+    data class Error(val exception: Throwable) : Resource<Nothing>()
     data object Loading : Resource<Nothing>()
-    data class ErrorWithMessage(val errorMessage: String) : Resource<Nothing>()
+    data object Idle: Resource<Nothing>()
 
     fun isSuccessful(): Boolean = this is Success
     fun isFailed(): Boolean = this is Error
     fun isLoading(): Boolean = this is Loading
 
-    fun getMessage(): String {
-        return if (this is ErrorWithMessage) {
-            this.errorMessage
-        } else {
-            "Un known Error"
-        }
-    }
 
     fun isEmpty(): Boolean {
         if (this is Success) {
@@ -34,4 +27,17 @@ fun <T> Resource<T>.getData(): T? {
     if (this is Resource.Success)
         return this.data
     return null
+}
+
+fun <T>Resource<T>.handle(
+    onLoading : () -> Unit,
+    onSuccess : (T) -> Unit,
+    onError: (Throwable) -> Unit
+) {
+    when(this) {
+        is Resource.Error -> onError(exception)
+        Resource.Idle -> {}
+        Resource.Loading -> onLoading()
+        is Resource.Success -> onSuccess(data)
+    }
 }

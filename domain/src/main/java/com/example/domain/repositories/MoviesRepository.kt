@@ -8,5 +8,9 @@ interface MoviesRepository {
         category: MovieCategory,
     ): List<Movie>
 
-    suspend fun refresh(category: MovieCategory)
+    suspend fun getMoviesById(
+        movieId: Int
+    ): Movie
+
+    suspend fun refresh()
 }

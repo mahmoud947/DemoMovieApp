@@ -1,8 +1,8 @@
 package com.example.domain.models
 
-enum class MovieCategory(name:String) {
-    nowPlaying("now_playing"),
-    popular("popular"),
-    topRated("top_rated"),
-    upcoming("upcoming")
+enum class MovieCategory(val endPoint:String) {
+    NowPlaying("now_playing"),
+    Popular("popular"),
+    TopRated("top_rated"),
+    Upcoming("upcoming")
 }

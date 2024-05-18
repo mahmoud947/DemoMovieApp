@@ -3,6 +3,7 @@ package com.example.data.datasource.remote.dtos.response
 
 import com.google.gson.annotations.SerializedName
 import androidx.annotation.Keep
+import com.example.data.constants.Constants
 
 @Keep
 data class MovieRes(
@@ -34,4 +35,7 @@ data class MovieRes(
     val voteAverage: Double?,
     @SerializedName("vote_count")
     val voteCount: Int?
-)
+) {
+    val posterUri get() = Constants.BASE_IMAGE_URL + posterPath
+    val backdropUrl get() = Constants.BASE_IMAGE_URL + backdropPath
+}
