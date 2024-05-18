@@ -3,7 +3,8 @@
 Welcome to the Demo Movie App! This project demonstrates a robust, scalable Android application following clean architecture principles and a multimodule setup.
 | ![Screenshot 1](screenshots/screenshot1.png) | ![Screenshot 2](screenshots/screenshot2.png) | ![Screenshot 3](screenshots/screenshot3.png) |
 |----------------------------------------------|----------------------------------------------|----------------------------------------------|
-
+| ![Screenshot 1](screenshots/screenshot4.png) | ![Screenshot 2](screenshots/screenshot5.png)|
+|----------------------------------------------|----------------------------------------------|----------------------------------------------|
 
 
 https://github.com/mahmoud947/DemoMovieApp/assets/65209396/f69cf69e-d17f-4a0a-8095-1d58ec9320e4
