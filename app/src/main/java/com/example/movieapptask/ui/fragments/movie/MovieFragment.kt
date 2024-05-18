@@ -53,10 +53,19 @@ class MovieFragment : BaseFragment() {
     }
 
     private fun initView() {
-        topRatedAdapter = TopRatedAdapter()
-        upcomingAdapter = MovieAdapter()
-        nowPlayingAdapter = MovieAdapter()
-        popularAdapter = MovieAdapter()
+        topRatedAdapter = TopRatedAdapter(interaction = object : TopRatedAdapter.Interaction {
+            override fun onItemSelected(position: Int, item: Movie) {
+                viewModel.navigateToMovieDetails(item.id)
+            }
+        })
+        val movieAdapterInteraction = object : MovieAdapter.Interaction {
+            override fun onItemSelected(position: Int, item: Movie) {
+                viewModel.navigateToMovieDetails(item.id)
+            }
+        }
+        upcomingAdapter = MovieAdapter(interaction = movieAdapterInteraction)
+        nowPlayingAdapter = MovieAdapter(interaction = movieAdapterInteraction)
+        popularAdapter = MovieAdapter(interaction = movieAdapterInteraction)
 
         binding.vpTopRated.apply {
             adapter = topRatedAdapter
@@ -64,6 +73,7 @@ class MovieFragment : BaseFragment() {
             overScrollMode = RecyclerView.OVER_SCROLL_NEVER
             setPageTransformer(ZoomOutPageTransformer())
         }
+
         binding.rvUpcoming.apply {
             adapter = upcomingAdapter
         }
@@ -84,6 +94,7 @@ class MovieFragment : BaseFragment() {
         observePopular()
         observeNowPlaying()
     }
+
 
     private fun observeTopRated() {
         viewLifecycleOwner.lifecycleScope.launch {

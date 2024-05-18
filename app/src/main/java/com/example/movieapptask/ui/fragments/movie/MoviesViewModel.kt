@@ -9,6 +9,7 @@ import com.example.domain.models.Movie
 import com.example.domain.models.MovieCategory
 import com.example.domain.usecases.GetMoviesByCategoryUseCase
 import com.example.domain.usecases.RefreshMoviesByCategoryUseCase
+import com.example.startupproject.ui.base.NavigationCommand
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -69,5 +70,11 @@ class MoviesViewModel @Inject constructor(
                 _nowPlaying.emit(it)
             }.launchIn(viewModelScope)
         }
+    }
+
+    fun navigateToMovieDetails(movieId: Int) {
+        navigationCommand.value = NavigationCommand.To(
+            MovieFragmentDirections.actionMovieFragmentToMovieDetailsFragment(movieId)
+        )
     }
 }
