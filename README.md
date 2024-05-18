@@ -68,6 +68,9 @@ The app leverages several popular libraries to ensure a smooth and efficient dev
 
 I developed the `easy_connectivity` library to simplify the management of network connectivity in Android applications. This library provides a straightforward and efficient way to check network status and handle connectivity changes. It is published on Maven, making it easy to integrate into other projects.
 
+### Work Manager
+The app utilizes Work Manager to clear the cache every 4 hours, ensuring optimal performance and storage management.
+
 ## Setup
 
 To set up the project locally, follow these steps:
