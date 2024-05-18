@@ -19,4 +19,7 @@ data class Movie(
     val video: Boolean,
     val voteAverage: Double,
     val voteCount: Int
-)
+){
+    fun ratingAsFloat(): Float = (this.voteAverage/2).toFloat()
+    fun voteCount():String = "Vote count $voteCount"
+}

@@ -102,5 +102,7 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
 
     implementation(libs.androidx.swiperefreshlayout.v120alpha01)
+    implementation (libs.easy.connectivity)
+
 
 }

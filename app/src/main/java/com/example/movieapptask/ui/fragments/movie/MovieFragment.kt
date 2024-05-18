@@ -122,11 +122,12 @@ class MovieFragment : BaseFragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.refreshData.collectLatest { resources ->
                     resources.handle(onLoading = {
-
+                        binding.srl.isRefreshing = false
                     }, onSuccess = {
                         binding.srl.isRefreshing = false
+                        viewModel.getMovies()
                     }, onError = {
-                        binding.srl.isRefreshing = false
+                        snackBar(it.message.toString())
                     })
                 }
             }
@@ -141,6 +142,7 @@ class MovieFragment : BaseFragment() {
                     resource.handle(onLoading = {
 
                     }, onSuccess = {
+
                         topRatedAdapter.submitList(it)
                     }, onError = {
 
@@ -156,12 +158,10 @@ class MovieFragment : BaseFragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.upcoming.collectLatest { resource: Resource<List<Movie>> ->
                     resource.handle(onLoading = {
-                        upcomingAdapter.isLoading = true
                     }, onSuccess = {
                         upcomingAdapter.submitList(it)
                         upcomingAdapter.isLoading = false
                     }, onError = {
-                        toast(it.toString())
                         upcomingAdapter.isLoading = false
                     })
                 }
@@ -174,12 +174,10 @@ class MovieFragment : BaseFragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.popular.collectLatest { resource: Resource<List<Movie>> ->
                     resource.handle(onLoading = {
-                        popularAdapter.isLoading = true
                     }, onSuccess = {
                         popularAdapter.submitList(it)
                         popularAdapter.isLoading = false
                     }, onError = {
-                        toast(it.toString())
                     })
                 }
             }
@@ -191,12 +189,19 @@ class MovieFragment : BaseFragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.nowPlaying.collectLatest { resource: Resource<List<Movie>> ->
-                    if(resource.isEmpty()){
 
-                    }
                     resource.handle(onLoading = {
-                        nowPlayingAdapter.isLoading = true
+
                     }, onSuccess = {
+                        if (resource.isEmpty()) {
+                            errorDialog.updateMessage("Looks like you have no movies. Try Sync now!")
+                            errorDialog.updateButtonTitle("Sync")
+                            errorDialog.startDialog()
+                            errorDialog.onClick {
+                                viewModel.refresh()
+                                errorDialog.dismissDialog()
+                            }
+                        }
                         nowPlayingAdapter.submitList(it)
                         nowPlayingAdapter.isLoading = false
                     }, onError = {

@@ -2,6 +2,7 @@ package com.example.movieapptask.ui.fragments.movie
 
 import androidx.lifecycle.viewModelScope
 import com.example.core.base.BaseViewModel
+import com.example.core.utils.ErrorModel
 import com.example.core.utils.Resource
 import com.example.domain.models.Movie
 import com.example.domain.models.MovieCategory
@@ -24,6 +25,7 @@ class MoviesViewModel @Inject constructor(
 ) : BaseViewModel() {
 
     init {
+        refresh()
         getMovies()
     }
 
@@ -43,6 +45,11 @@ class MoviesViewModel @Inject constructor(
 
     private val _refreshData = MutableStateFlow<Resource<Unit>>(Resource.Loading)
     val refreshData: StateFlow<Resource<Unit>> get() = _refreshData
+
+    override fun handleCoroutineException(exception: Throwable) {
+        super.handleCoroutineException(exception)
+        showErrorMessage.value = ErrorModel(message = exception.message.toString(), button = "Ok!")
+    }
 
     fun getMovies() {
         launchCoroutine(Dispatchers.IO) {

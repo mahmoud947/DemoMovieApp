@@ -8,6 +8,10 @@ interface MoviesRepository {
         category: MovieCategory,
     ): List<Movie>
 
+    suspend fun getAllMovies(
+    ): List<Movie>
+
+
     suspend fun getMoviesById(
         movieId: Int
     ): Movie

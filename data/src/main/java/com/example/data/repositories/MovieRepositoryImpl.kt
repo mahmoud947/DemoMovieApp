@@ -16,6 +16,10 @@ class MovieRepositoryImpl(
         return movieDao.getMovieByCategory(category = category).map { it.toDomain() }
     }
 
+    override suspend fun getAllMovies(): List<Movie> {
+       return movieDao.getAll().map { it.toDomain() }
+    }
+
     override suspend fun getMoviesById(movieId: Int): Movie {
         return movieDao.getMovieByID(movieId = movieId).toDomain()
     }

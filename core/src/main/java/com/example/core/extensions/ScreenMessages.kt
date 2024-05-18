@@ -27,6 +27,10 @@ fun View.snackBar(message: String, duration: Int = Snackbar.LENGTH_LONG) {
     Snackbar.make(this, message, duration).show()
 }
 
+fun Fragment.snackBar(message: String, duration: Int = Snackbar.LENGTH_LONG) {
+    Snackbar.make(requireView(), message, duration).show()
+}
+
 fun View.snackBar(@StringRes message: Int, duration: Int = Snackbar.LENGTH_LONG) {
     Snackbar.make(this, message, duration).show()
 }
@@ -34,3 +38,4 @@ fun View.snackBar(@StringRes message: Int, duration: Int = Snackbar.LENGTH_LONG)
 fun Fragment.snackBar(@StringRes message: Int, duration: Int = Snackbar.LENGTH_LONG) {
     Snackbar.make(this.requireView(), message, duration).show()
 }
+
