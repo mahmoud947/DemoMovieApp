@@ -13,11 +13,34 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object LocalModule {
+
     @Provides
     @Singleton
-    fun provideUserDao(
+    fun provideMovieDatabase(
         @ApplicationContext context: Context
+    ): MovieDatabase =
+        MovieDatabase.getInstance(context = context)
+
+    @Provides
+    @Singleton
+    fun provideMovieDao(
+        database: MovieDatabase
     ): MovieDao =
-        MovieDatabase.getInstance(context = context).movieDao
+        database.movieDao
+
+//    @OptIn(ExperimentalPagingApi::class)
+//    @Provides
+//    fun provideMoviePager(service: MovieService, db: MovieDatabase): Pager<Int, MovieEntity> {
+//        return Pager(
+//            config = PagingConfig(pageSize = 20),
+//            remoteMediator = MovieRemoteMediator(
+//                service = service,
+//                db = db
+//            ),
+//            pagingSourceFactory = {
+//                db.movieDao.pagingSource()
+//            }
+//        )
+//    }
 
 }

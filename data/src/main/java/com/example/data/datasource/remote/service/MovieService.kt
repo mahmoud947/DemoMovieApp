@@ -10,8 +10,6 @@ interface MovieService {
     @GET("movie/{category}")
     suspend fun getMoviesByCategory(
         @Path("category")
-        category:String,
-        @Query("page")
-        page:Int
+        category:String
     ):BaseResponse<List<MovieRes>>
 }

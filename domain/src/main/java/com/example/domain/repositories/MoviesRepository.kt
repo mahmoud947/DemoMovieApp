@@ -6,7 +6,7 @@ import com.example.domain.models.MovieCategory
 interface MoviesRepository {
     suspend fun getMoviesByCategory(
         category: MovieCategory,
-        page: Int
     ): List<Movie>
 
+    suspend fun refresh(category: MovieCategory)
 }
